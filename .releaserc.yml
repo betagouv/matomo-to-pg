@@ -11,8 +11,6 @@
           "dockerRegistry": "ghcr.io",
           "dockerProject": "betagouv",
           "dockerImage": "matomo-to-pg/sync",
-          "dockerContext": "./",
-          "dockerFile": "./Dockerfile",
           "dockerTags":
             [
               "{{major}}.{{minor}}.{{patch}}",

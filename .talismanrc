@@ -4,7 +4,7 @@ fileignoreconfig:
 - filename: .github/workflows/docker-publish.yaml
   checksum: 8966165275b7dc5592d21b7dd9a4c666a38cb806f350916bec22da22df1b38fe
 - filename: .github/workflows/release.yaml
-  checksum: 2cf775fef7e6f06a8624cd139ee2ba4ecdadf0e9cfd9f4d3fc6c6981f6a8dd39
+  checksum: 412b5686810e7de45534f2aec78b735ac636adef778b661950e165994741f79f
 - filename: README.md
   checksum: b853da2bffed7fcf2d74fb2aa6daf7ac4a681327764feb72a2e94e1686809b99
 - filename: pg-init.sql
