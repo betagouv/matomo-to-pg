@@ -1,0 +1,20 @@
+{
+  "name": "matomo-dumper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "kysely": "^0.27.4",
+    "mysql2": "^3.11.0",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "husky": "^9.1.5",
+    "is-ci": "^3.0.1",
+    "node-talisman": "^1.29.11"
+  },
+  "scripts": {
+    "postinstall": "is-ci || husky"
+  }
+}
