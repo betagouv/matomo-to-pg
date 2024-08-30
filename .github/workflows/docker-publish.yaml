@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: matomo-to-pg
+  IMAGE_NAME: sync
 
 jobs:
   # Push image to GitHub Packages.
