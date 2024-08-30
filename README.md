@@ -1,4 +1,4 @@
-# matomo-to-pg ![GitHub Release](https://img.shields.io/github/v/release/betagouv/matomo-to-pg)
+# matomo-to-pg ![](https://img.shields.io/badge/Docker-ghcr.io-blue?logo=docker) ![GitHub Release](https://img.shields.io/github/v/release/betagouv/matomo-to-pg) 
 
 ![](./logo.png)
 
