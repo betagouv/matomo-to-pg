@@ -10,21 +10,26 @@ For example to create custom metabase dashboards:
 
 The tables currently synced are:
 
-- `matomo_log_visit`
 - `matomo_log_conversion`
+- `matomo_log_visit`
 - `matomo_log_link_visit_action`
 - `matomo_log_action`
 
 ## Usage
 
-Run with docker:
+Adjust your `.env` from the `.env.example` then run :
 
 ```bash
-docker run \
-    -e SOURCE_DATABASE_URL="mysql://user:pass@host:port/database" \
-    -e TARGET_DATABASE_URL="postgresql://user:pass@host:port/database" \
-    -e SITE_ID="1" \
-    ghcr.io/betagouv/matomo-to-pg/sync
+docker run --env-file .env ghcr.io/betagouv/matomo-to-pg/sync
+```
+
+You first need to create your PostgreSQL database structure:
+
+Example with docker:
+
+```
+docker cp ./pg-init.sql [id]:/tmp/pg-init.sql
+docker exec -ti [id] psql --dbname matomo -U matomo -f /tmp/pg-init.sql
 ```
 
 ## Dev

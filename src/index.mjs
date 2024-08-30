@@ -2,31 +2,33 @@
 import pg from "pg";
 import { createPool } from "mysql2";
 import { Kysely, PostgresDialect, MysqlDialect } from "kysely";
+import assert from "assert";
 
 const SITE_ID = process.env.SITE_ID;
 const SOURCE_DATABASE_URL = process.env.SOURCE_DATABASE_URL;
 const TARGET_DATABASE_URL = process.env.TARGET_DATABASE_URL;
+const BATCH_ROWS = 500;
 
-const sourceDialect = new MysqlDialect({
-  pool: createPool({
-    uri: SOURCE_DATABASE_URL,
-  }),
-});
-
-const targetDialect = new PostgresDialect({
-  pool: new pg.Pool({
-    connectionString: TARGET_DATABASE_URL,
-  }),
-});
+assert(!!SITE_ID, "process.env.SITE_ID not found");
+assert(!!SOURCE_DATABASE_URL, "process.env.SOURCE_DATABASE_URL not found");
+assert(!!TARGET_DATABASE_URL, "process.env.TARGET_DATABASE_URL not found");
 
 /** @type {Kysely<import("./source").DB>} */
-export const sourceDB = new Kysely({
-  dialect: sourceDialect,
+const sourceDB = new Kysely({
+  dialect: new MysqlDialect({
+    pool: createPool({
+      uri: SOURCE_DATABASE_URL,
+    }),
+  }),
 });
 
 /** @type {Kysely<import("./target").DB>} */
-export const targetDB = new Kysely({
-  dialect: targetDialect,
+const targetDB = new Kysely({
+  dialect: new PostgresDialect({
+    pool: new pg.Pool({
+      connectionString: TARGET_DATABASE_URL,
+    }),
+  }),
 });
 
 /**
@@ -53,8 +55,6 @@ const getMaxValue = async (table, column, idsite = null) => {
   const maxValue = (maxRow && parseInt(maxRow.value)) || 0;
   return maxValue;
 };
-
-const BATCH_ROWS = 100;
 
 /**
  *
@@ -159,6 +159,8 @@ const importSite = async (idsite) => {
 
   console.log(`copy matomo_log_action from ${lastActionId}...`);
 
+  // we first get a list of possible idaction to optimize the next queries
+  // we do this because matomo_log_action table doesnt have site id
   const validActions = (
     await sourceDB
       .selectFrom("matomo_log_link_visit_action")
@@ -175,7 +177,7 @@ const importSite = async (idsite) => {
     const sourceRows = await sourceDB
       .selectFrom("matomo_log_action")
       .selectAll()
-      .where(({ eb, selectFrom }) => eb("idaction", "in", validActions))
+      .where(({ eb, selectFrom }) => eb("idaction", "in", validActions)) // optim
       .where("idaction", ">", lastActionId)
       .orderBy("idaction")
       .limit(BATCH_ROWS)
