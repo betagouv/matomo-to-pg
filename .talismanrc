@@ -1,6 +1,10 @@
 fileignoreconfig:
 - filename: .env.example
-  checksum: e032c5310a6305eff154ef41173b2121c46e9bfe26809563e9729ebd569d8299
+  checksum: 31771825b9cfdb24bbf032ddbbcbd37bd8f2825d5b0d05413c75732a1762f2a9
+- filename: .github/workflows/docker-publish.yaml
+  checksum: 8966165275b7dc5592d21b7dd9a4c666a38cb806f350916bec22da22df1b38fe
+- filename: README.md
+  checksum: b853da2bffed7fcf2d74fb2aa6daf7ac4a681327764feb72a2e94e1686809b99
 - filename: pg-init.sql
   checksum: df8d35ff7668d232137e1c8076d6dfbbe8f5eec16f2d6611ee16e55e71e7509f
 - filename: source.ts

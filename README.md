@@ -17,17 +17,21 @@ The tables currently synced are:
 
 ## Usage
 
-Define:
+Run with docker:
 
-- `SOURCE_DATABASE_URL`: The matomo MySQL source
-- `TARGET_DATABASE_URL`: The PostgreSQL destination
-- `SITE_ID`: The matomo site ID to import
-
-Then run `npx matomo-to-pg`
+```bash
+docker run \
+    -e SOURCE_DATABASE_URL="mysql://user:pass@host:port/database" \
+    -e TARGET_DATABASE_URL="postgresql://user:pass@host:port/database" \
+    -e SITE_ID="1" \
+    ghcr.io/betagouv/matomo-to-pg
+```
 
 ## Dev
 
-Run source with `node --env-file=.env index.mjs`
+Run from source with `node --env-file=.env src/index.mjs`
+
+To update the source or target database typings, run `yarn kysely-codegen --print` with the `DATABASE_URL` of your choice.
 
 ## references
 

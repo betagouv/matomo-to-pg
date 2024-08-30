@@ -1,7 +1,7 @@
 {
   "name": "matomo-to-pg",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "Apache-2.0",
   "dependencies": {
     "kysely": "^0.27.4",
@@ -19,6 +19,6 @@
     "node-talisman": "^1.29.11"
   },
   "scripts": {
-    "postinstall": "is-ci || husky"
+    "postinstall": "(([ \"$NODE_ENV\" = \"production\" ] && echo '') || ( is-ci && echo '' ) ) || husky"
   }
 }
