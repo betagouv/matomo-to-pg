@@ -2,11 +2,18 @@
 
 ![](./logo.png)
 
-Dumps some matomo tables from MySQL to PostgreSQL.
+Sync some matomo tables from MySQL to PostgreSQL.
 
 For example to create custom metabase dashboards:
 
 ![](./shot.png)
+
+The tables currently synced are:
+
+- `matomo_log_visit`
+- `matomo_log_conversion`
+- `matomo_log_link_visit_action`
+- `matomo_log_action`
 
 ## Usage
 
