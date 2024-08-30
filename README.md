@@ -1,4 +1,4 @@
-# matomo-to-pg
+# matomo-to-pg ![GitHub Release](https://img.shields.io/github/v/release/betagouv/matomo-to-pg)
 
 ![](./logo.png)
 
