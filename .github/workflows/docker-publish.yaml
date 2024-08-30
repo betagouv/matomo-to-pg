@@ -64,14 +64,14 @@ jobs:
 
           docker tag $IMAGE_NAME $GH_IMAGE_ID:$VERSION
           docker push $GH_IMAGE_ID:$VERSION
-          docker tag $IMAGE_NAME betagouv/aplus:$VERSION
-          docker push betagouv/aplus:$VERSION
+          #docker tag $IMAGE_NAME betagouv/aplus:$VERSION
+          #docker push betagouv/aplus:$VERSION
 
           if [ "$VERSION" == "latest" ]; then
             VERSION=main-$(date +'%Y-%m-%dt%H-%M-%Sz')-$(git rev-parse --short HEAD)
             echo VERSION=$VERSION
             docker tag $IMAGE_NAME $GH_IMAGE_ID:$VERSION
             docker push $GH_IMAGE_ID:$VERSION
-            docker tag $IMAGE_NAME betagouv/aplus:$VERSION
-            docker push betagouv/aplus:$VERSION
+            #docker tag $IMAGE_NAME betagouv/aplus:$VERSION
+            #docker push betagouv/aplus:$VERSION
           fi
