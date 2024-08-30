@@ -202,7 +202,7 @@ const importSite = async (idsite) => {
   });
 };
 
-console.log("\nExtract matomo data to PG\n");
+console.log(`\nExtract matomo data to PG ${process.env.BUILD_VERSION || ""}\n`);
 
 importSite(parseInt(SITE_ID))
   .then(() => {
