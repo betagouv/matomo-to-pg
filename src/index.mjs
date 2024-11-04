@@ -211,6 +211,7 @@ importSite(parseInt(SITE_ID))
   .catch((e) => {
     console.log(e);
     console.log("\n❌ Error\n");
+    throw e;
   })
   .finally(() => {
     targetDB.destroy();
