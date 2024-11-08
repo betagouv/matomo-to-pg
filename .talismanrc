@@ -8,7 +8,7 @@ fileignoreconfig:
 - filename: README.md
   checksum: b853da2bffed7fcf2d74fb2aa6daf7ac4a681327764feb72a2e94e1686809b99
 - filename: pg-init.sql
-  checksum: df8d35ff7668d232137e1c8076d6dfbbe8f5eec16f2d6611ee16e55e71e7509f
+  checksum: d75753cc0ff0404eea6521d8fc79f833b8442f917f850b675d1945708d86f8f3
 - filename: source.ts
   checksum: facc3a72bddfa3bb6aefbab673c658154c68b4eb5eb2081f79555db08c4c9e62
 - filename: target.d.ts

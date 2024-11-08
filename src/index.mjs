@@ -27,6 +27,7 @@ const targetDB = new Kysely({
   dialect: new PostgresDialect({
     pool: new pg.Pool({
       connectionString: TARGET_DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
     }),
   }),
 });
