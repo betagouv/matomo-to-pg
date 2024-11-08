@@ -176,91 +176,91 @@ CREATE TABLE matomo.actions_types (
 );
 ALTER TABLE matomo.actions_types
 ADD CONSTRAINT actions_types_pkey PRIMARY KEY (id)
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is a content interaction',
         16,
         'TYPE_CONTENT_INTERACTION'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is a content target',
         15,
         'TYPE_CONTENT_TARGET'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is a content piece',
         14,
         'TYPE_CONTENT_PIECE'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is a content name (see Content Tracking user guide and developer guide)',
         13,
         'TYPE_CONTENT_NAME'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is an event name',
         12,
         'TYPE_EVENT_NAME'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is an event action',
         11,
         'TYPE_EVENT_ACTION'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is an event category (see Tracking Events user guide)',
         10,
         'TYPE_EVENT_CATEGORY'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action type is a site search action.',
         8,
         'TYPE_SITE_SEARCH'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is the name of an ecommerce item category that is used on the site.',
         7,
         'TYPE_ECOMMERCE_ITEM_CATEGORY'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is the name of an ecommerce item that is sold on the site.',
         6,
         'TYPE_ECOMMERCE_ITEM_NAME'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is the SKU of an ecommerce item that is sold on the site.',
         5,
         'TYPE_ECOMMERCE_ITEM_SKU'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is the page title of a page on the website being tracked.',
         4,
         'TYPE_PAGE_TITLE'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is a URL of a file that was downloaded from the website being tracked.',
         3,
         'TYPE_DOWNLOAD'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is a URL is of a link on the website being tracked. A visitor clicked it.',
         2,
         'TYPE_OUTLINK'
     );
-insert into "actions_types" ("description", "id", "name")
+insert into matomo."actions_types" ("description", "id", "name")
 values (
         'the action is a URL to a page on the website being tracked.',
         1,
