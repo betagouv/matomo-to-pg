@@ -167,7 +167,7 @@ const importSite = async (idsite) => {
       .selectFrom("matomo_log_link_visit_action")
       .select(["idaction_name", "idaction_url"])
       .where("idsite", "=", idsite)
-      .where("server_time", ">=", new Date("2024-01-01"))
+      .where("server_time", ">=", new Date("2025-01-01"))
       .execute()
   )
     .flatMap((r) => [r.idaction_name, r.idaction_url])
