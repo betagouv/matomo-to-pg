@@ -174,8 +174,7 @@ CREATE TABLE matomo.actions_types (
     name character varying(50) NOT NULL,
     description character varying(255) NULL
 );
-ALTER TABLE matomo.actions_types
-ADD CONSTRAINT actions_types_pkey PRIMARY KEY (id)
+ALTER TABLE matomo.actions_types ADD CONSTRAINT actions_types_pkey PRIMARY KEY (id);
 insert into matomo."actions_types" ("description", "id", "name")
 values (
         ' the action is a content interaction',
