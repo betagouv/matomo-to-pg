@@ -6,7 +6,7 @@
  */
 
 const BATCH_ROWS = 500;
-const ACTION_BATCH = 10000;
+const ACTION_BATCH = 1000;
 
 /**
  * Get the maximum value of a column in a table
