@@ -225,7 +225,7 @@ export const importSite = async ({
     "idvisit",
     idsite,
   );
-  let lastVisionActionId = await getMaxValue(
+  let lastVisitActionId = await getMaxValue(
     targetDB,
     "matomo.matomo_log_link_visit_action",
     "idlink_va",
@@ -264,14 +264,14 @@ export const importSite = async ({
   log("\n");
 
   // Copy link visit actions
-  lastVisionActionId = await copyTableBatch({
+  lastVisitActionId = await copyTableBatch({
     sourceDB,
     targetDB,
     sourceTable: "matomo_log_link_visit_action",
     targetTable: "matomo.matomo_log_link_visit_action",
     idsite,
     idColumn: "idlink_va",
-    startId: lastVisionActionId,
+    startId: lastVisitActionId,
     log,
   });
   log("\n");
@@ -290,6 +290,6 @@ export const importSite = async ({
   console.table({
     lastVisitId,
     lastConversionId,
-    lastVisionActionId,
+    lastVisitActionId,
   });
 };
