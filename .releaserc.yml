@@ -1,5 +1,5 @@
 {
-  "branches": ["main"],
+  "branches": ["main", "beta"],
   "plugins":
     [
       "@semantic-release/commit-analyzer",
@@ -13,11 +13,10 @@
           "dockerImage": "matomo-to-pg/sync",
           "dockerTags":
             [
-              "{{major}}.{{minor}}.{{patch}}",
-              "{{major}}.{{minor}}",
-              "{{major}}-latest",
-              "{{git_sha}}",
-              "latest",
+              "{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+              "{{major}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+              "{{major}}.{{minor}}-{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
+              "{{version}}",
             ],
           "dockerArgs":
             {
