@@ -19,6 +19,7 @@
     "node-talisman": "^1.29.11"
   },
   "scripts": {
+    "test": "node --test src/*.test.mjs",
     "postinstall": "(([ \"$NODE_ENV\" = \"production\" ] && echo '') || ( is-ci && echo '' ) ) || husky"
   }
 }
