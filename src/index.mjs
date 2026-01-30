@@ -162,30 +162,63 @@ const importSite = async (idsite) => {
 
   // we first get a list of possible idaction to optimize the next queries
   // we do this because matomo_log_action table doesnt have site id
-  const validActions = (
-    await sourceDB
+  // Use DISTINCT in DB and Set in JS to minimize memory usage
+  const validActions = new Set();
+  let actionOffset = 0;
+  const ACTION_BATCH = 10000;
+
+  console.log(" - fetching valid action IDs...");
+  while (true) {
+    const batch = await sourceDB
       .selectFrom("matomo_log_link_visit_action")
       .select(["idaction_name", "idaction_url"])
+      .distinct()
       .where("idsite", "=", idsite)
       .where("server_time", ">=", new Date("2025-01-01"))
-      .execute()
-  )
-    .flatMap((r) => [r.idaction_name, r.idaction_url])
-    .filter((r) => r !== null);
+      .limit(ACTION_BATCH)
+      .offset(actionOffset)
+      .execute();
+
+    if (batch.length === 0) break;
+
+    for (const r of batch) {
+      if (r.idaction_name !== null) validActions.add(r.idaction_name);
+      if (r.idaction_url !== null) validActions.add(r.idaction_url);
+    }
+    actionOffset += ACTION_BATCH;
+    console.log(` - fetched ${actionOffset} rows, ${validActions.size} unique actions`);
+  }
+
+  // Sort once and filter to only IDs we haven't processed yet
+  const validActionsArray = Array.from(validActions)
+    .filter(id => id > lastActionId)
+    .sort((a, b) => a - b);
+  console.log(` - total unique actions to process: ${validActionsArray.length}`);
+
+  // Process in chunks to avoid huge IN clauses
+  const chunkSize = 5000;
+  let chunkIndex = 0;
 
   rows = true;
   while (rows) {
+    const actionsToProcess = validActionsArray.slice(chunkIndex, chunkIndex + chunkSize);
+
+    if (actionsToProcess.length === 0) {
+      console.log("nothing to copy");
+      rows = false;
+      continue;
+    }
+
     const sourceRows = await sourceDB
       .selectFrom("matomo_log_action")
       .selectAll()
-      .where(({ eb, selectFrom }) => eb("idaction", "in", validActions)) // optim
-      .where("idaction", ">", lastActionId)
+      .where(({ eb }) => eb("idaction", "in", actionsToProcess))
       .orderBy("idaction")
-      .limit(BATCH_ROWS)
       .execute();
+    chunkIndex += chunkSize;
+
     if (sourceRows.length === 0) {
-      console.log("nothing to copy");
-      rows = false;
+      console.log(` - chunk had no matching actions, continuing...`);
       continue;
     }
     lastActionId = sourceRows[sourceRows.length - 1].idaction;
@@ -193,7 +226,7 @@ const importSite = async (idsite) => {
       .insertInto("matomo.matomo_log_action")
       .values(sourceRows)
       .executeTakeFirst();
-    console.log(`inserted ${insertion.numInsertedOrUpdatedRows}`);
+    console.log(` - inserted ${insertion.numInsertedOrUpdatedRows} (processed ${chunkIndex}/${validActionsArray.length})`);
   }
 
   console.table({
