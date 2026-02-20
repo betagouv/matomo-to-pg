@@ -240,14 +240,14 @@ describe("copyTableBatch", () => {
 describe("fetchValidActionIds", () => {
   it("should return empty set when no actions found", async () => {
     const sourceDB = createMockDB({ selectResults: [[]] });
-    const result = await fetchValidActionIds(sourceDB, 1, () => {});
+    const result = await fetchValidActionIds(sourceDB, 1, 0, () => {});
 
     assert.strictEqual(result.size, 0);
   });
 
   it("should query matomo_log_link_visit_action with correct columns", async () => {
     const sourceDB = createMockDB({ selectResults: [[]] });
-    await fetchValidActionIds(sourceDB, 1, () => {});
+    await fetchValidActionIds(sourceDB, 1, 0, () => {});
 
     assert.deepStrictEqual(sourceDB._calls.selectFrom, [
       "matomo_log_link_visit_action",
@@ -262,7 +262,7 @@ describe("fetchValidActionIds", () => {
 
   it("should apply idsite and date filters", async () => {
     const sourceDB = createMockDB({ selectResults: [[]] });
-    await fetchValidActionIds(sourceDB, 42, () => {});
+    await fetchValidActionIds(sourceDB, 42, 0, () => {});
 
     // Check idsite filter
     assert.deepStrictEqual(sourceDB._calls.where[0], ["idsite", "=", 42]);
@@ -273,7 +273,7 @@ describe("fetchValidActionIds", () => {
 
   it("should use pagination with limit and offset", async () => {
     const sourceDB = createMockDB({ selectResults: [[]] });
-    await fetchValidActionIds(sourceDB, 1, () => {});
+    await fetchValidActionIds(sourceDB, 1, 0, () => {});
 
     assert.deepStrictEqual(sourceDB._calls.limit, [1000]);
     assert.deepStrictEqual(sourceDB._calls.offset, [0]);
@@ -291,13 +291,33 @@ describe("fetchValidActionIds", () => {
       ],
     });
 
-    const result = await fetchValidActionIds(sourceDB, 1, () => {});
+    const result = await fetchValidActionIds(sourceDB, 1, 0, () => {});
 
     assert.strictEqual(result.size, 4);
     assert.ok(result.has(1));
     assert.ok(result.has(2));
     assert.ok(result.has(3));
     assert.ok(result.has(4));
+  });
+
+  it("should only collect action IDs greater than lastActionId", async () => {
+    const sourceDB = createMockDB({
+      selectResults: [
+        [
+          { idaction_name: 5, idaction_url: 10 },
+          { idaction_name: 3, idaction_url: 15 },
+        ],
+        [],
+      ],
+    });
+
+    const result = await fetchValidActionIds(sourceDB, 1, 8, () => {});
+
+    assert.strictEqual(result.size, 2);
+    assert.ok(result.has(10));
+    assert.ok(result.has(15));
+    assert.ok(!result.has(5));
+    assert.ok(!result.has(3));
   });
 });
 

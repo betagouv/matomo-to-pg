@@ -95,12 +95,14 @@ export const copyTableBatch = async ({
  * Fetch valid action IDs for a site
  * @param {SourceDB} sourceDB
  * @param {number} idsite
+ * @param {number} [lastActionId]
  * @param {(msg: string) => void} [log]
  * @returns {Promise<Set<number>>}
  */
 export const fetchValidActionIds = async (
   sourceDB,
   idsite,
+  lastActionId = 0,
   log = console.log,
 ) => {
   const validActions = new Set();
@@ -115,6 +117,12 @@ export const fetchValidActionIds = async (
       .distinct()
       .where("idsite", "=", idsite)
       .where("server_time", ">=", new Date("2025-01-01"))
+      .where(({ eb }) =>
+        eb.or([
+          eb("idaction_name", ">", lastActionId),
+          eb("idaction_url", ">", lastActionId),
+        ]),
+      )
       .limit(ACTION_BATCH)
       .offset(actionOffset)
       .execute();
@@ -122,8 +130,10 @@ export const fetchValidActionIds = async (
     if (batch.length === 0) break;
 
     for (const r of batch) {
-      if (r.idaction_name !== null) validActions.add(r.idaction_name);
-      if (r.idaction_url !== null) validActions.add(r.idaction_url);
+      if (r.idaction_name !== null && r.idaction_name > lastActionId)
+        validActions.add(r.idaction_name);
+      if (r.idaction_url !== null && r.idaction_url > lastActionId)
+        validActions.add(r.idaction_url);
     }
     actionOffset += ACTION_BATCH;
     log(` - fetched ${actionOffset} rows, ${validActions.size} unique actions`);
@@ -192,7 +202,7 @@ export const copyActions = async ({
       .values(sourceRows)
       .executeTakeFirst();
     log(
-      ` - inserted ${insertion.numInsertedOrUpdatedRows} (processed ${chunkIndex}/${validActionsArray.length})`,
+      ` - inserted ${insertion.numInsertedOrUpdatedRows} (processed ${Math.min(chunkIndex, validActionsArray.length)}/${validActionsArray.length})`,
     );
   }
 
@@ -278,7 +288,7 @@ export const importSite = async ({
 
   // Copy actions
   log(`copy matomo_log_action from ${lastActionId}...`);
-  const validActions = await fetchValidActionIds(sourceDB, idsite, log);
+  const validActions = await fetchValidActionIds(sourceDB, idsite, lastActionId, log);
   await copyActions({
     sourceDB,
     targetDB,
