@@ -106,15 +106,15 @@ export const fetchValidActionIds = async (
   log = console.log,
 ) => {
   const validActions = new Set();
-  let actionOffset = 0;
+  let lastIdlinkVa = 0;
+  let totalFetched = 0;
 
   log(" - fetching valid action IDs...");
 
   while (true) {
     const batch = await sourceDB
       .selectFrom("matomo_log_link_visit_action")
-      .select(["idaction_name", "idaction_url"])
-      .distinct()
+      .select(["idlink_va", "idaction_name", "idaction_url"])
       .where("idsite", "=", idsite)
       .where("server_time", ">=", new Date("2025-01-01"))
       .where(({ eb }) =>
@@ -123,11 +123,15 @@ export const fetchValidActionIds = async (
           eb("idaction_url", ">", lastActionId),
         ]),
       )
+      .where("idlink_va", ">", lastIdlinkVa)
+      .orderBy("idlink_va")
       .limit(ACTION_BATCH)
-      .offset(actionOffset)
       .execute();
 
     if (batch.length === 0) break;
+
+    lastIdlinkVa = batch[batch.length - 1].idlink_va;
+    totalFetched += batch.length;
 
     for (const r of batch) {
       if (r.idaction_name !== null && r.idaction_name > lastActionId)
@@ -135,8 +139,7 @@ export const fetchValidActionIds = async (
       if (r.idaction_url !== null && r.idaction_url > lastActionId)
         validActions.add(r.idaction_url);
     }
-    actionOffset += ACTION_BATCH;
-    log(` - fetched ${actionOffset} rows, ${validActions.size} unique actions`);
+    log(` - fetched ${totalFetched} rows, ${validActions.size} unique actions`);
   }
 
   return validActions;
@@ -288,7 +291,12 @@ export const importSite = async ({
 
   // Copy actions
   log(`copy matomo_log_action from ${lastActionId}...`);
-  const validActions = await fetchValidActionIds(sourceDB, idsite, lastActionId, log);
+  const validActions = await fetchValidActionIds(
+    sourceDB,
+    idsite,
+    lastActionId,
+    log,
+  );
   await copyActions({
     sourceDB,
     targetDB,
