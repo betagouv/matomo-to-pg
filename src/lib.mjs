@@ -116,7 +116,7 @@ export const fetchValidActionIds = async (
       .selectFrom("matomo_log_link_visit_action")
       .select(["idlink_va", "idaction_name", "idaction_url"])
       .where("idsite", "=", idsite)
-      .where("server_time", ">=", new Date("2025-01-01"))
+      .where("server_time", ">=", new Date("2026-01-01"))
       .where(({ eb }) =>
         eb.or([
           eb("idaction_name", ">", lastActionId),
