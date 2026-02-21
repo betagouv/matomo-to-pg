@@ -254,10 +254,11 @@ describe("fetchValidActionIds", () => {
     ]);
     assert.strictEqual(sourceDB._calls.select.length, 1);
     assert.deepStrictEqual(sourceDB._calls.select[0], [
+      "idlink_va",
       "idaction_name",
       "idaction_url",
     ]);
-    assert.deepStrictEqual(sourceDB._calls.distinct, [true]);
+    assert.deepStrictEqual(sourceDB._calls.distinct, []); // no distinct
   });
 
   it("should apply idsite and date filters", async () => {
@@ -271,21 +272,48 @@ describe("fetchValidActionIds", () => {
     assert.strictEqual(sourceDB._calls.where[1][1], ">=");
   });
 
-  it("should use pagination with limit and offset", async () => {
+  it("should use cursor-based pagination on idlink_va", async () => {
     const sourceDB = createMockDB({ selectResults: [[]] });
     await fetchValidActionIds(sourceDB, 1, 0, () => {});
 
     assert.deepStrictEqual(sourceDB._calls.limit, [1000]);
-    assert.deepStrictEqual(sourceDB._calls.offset, [0]);
+    assert.deepStrictEqual(sourceDB._calls.offset, []); // no offset
+    assert.deepStrictEqual(sourceDB._calls.orderBy, ["idlink_va"]);
+    // cursor where: idlink_va > 0
+    const cursorWhere = sourceDB._calls.where.find(
+      (w) => Array.isArray(w) && w[0] === "idlink_va",
+    );
+    assert.deepStrictEqual(cursorWhere, ["idlink_va", ">", 0]);
+  });
+
+  it("should advance cursor using last idlink_va of each batch", async () => {
+    const sourceDB = createMockDB({
+      selectResults: [
+        [
+          { idlink_va: 10, idaction_name: 1, idaction_url: 2 },
+          { idlink_va: 20, idaction_name: 3, idaction_url: 4 },
+        ],
+        [], // End pagination
+      ],
+    });
+
+    await fetchValidActionIds(sourceDB, 1, 0, () => {});
+
+    // Second call should use cursor idlink_va > 20
+    const cursorWheres = sourceDB._calls.where.filter(
+      (w) => Array.isArray(w) && w[0] === "idlink_va",
+    );
+    assert.deepStrictEqual(cursorWheres[0], ["idlink_va", ">", 0]);
+    assert.deepStrictEqual(cursorWheres[1], ["idlink_va", ">", 20]);
   });
 
   it("should collect unique action IDs from multiple batches", async () => {
     const sourceDB = createMockDB({
       selectResults: [
         [
-          { idaction_name: 1, idaction_url: 2 },
-          { idaction_name: 1, idaction_url: 3 },
-          { idaction_name: null, idaction_url: 4 },
+          { idlink_va: 1, idaction_name: 1, idaction_url: 2 },
+          { idlink_va: 2, idaction_name: 1, idaction_url: 3 },
+          { idlink_va: 3, idaction_name: null, idaction_url: 4 },
         ],
         [], // End pagination
       ],
@@ -304,8 +332,8 @@ describe("fetchValidActionIds", () => {
     const sourceDB = createMockDB({
       selectResults: [
         [
-          { idaction_name: 5, idaction_url: 10 },
-          { idaction_name: 3, idaction_url: 15 },
+          { idlink_va: 1, idaction_name: 5, idaction_url: 10 },
+          { idlink_va: 2, idaction_name: 3, idaction_url: 15 },
         ],
         [],
       ],
