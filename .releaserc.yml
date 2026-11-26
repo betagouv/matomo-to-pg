@@ -11,6 +11,7 @@
           "dockerRegistry": "ghcr.io",
           "dockerProject": "betagouv",
           "dockerImage": "matomo-to-pg/sync",
+          "dockerPlatform": ["linux/amd64", "linux/arm64"],
           "dockerTags":
             [
               "{{#if prerelease.[0]}}{{prerelease.[0]}}{{else}}latest{{/if}}",
